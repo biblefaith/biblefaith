@@ -1,18 +1,27 @@
-from common.models import db, BibleTranslations, UserLevels
+from common.models import db, BibleTranslations, UserLevels, UserSettings
 
+
+def create_table_if_not_exists(table, data=None):
+    if not table.table_exists():
+        db.create_tables([table])
+        if data:
+            for row_data in data:
+                table.create(**row_data)
 
 def init_database():
-
     with db.atomic():
-        if not BibleTranslations.table_exists():
-            db.create_tables([BibleTranslations])
-            BibleTranslations.create(name = "RST+", description = "TBD")
-            BibleTranslations.create(name = "NRT", description = "Новый Русский Перевод (НРП)")
+        create_table_if_not_exists(BibleTranslations, [
+            {"name": "RST+", "description": "TBD"},
+            {"name": "NRT", "description": "Новый Русский Перевод (НРП)"}
+        ])
 
-        if not UserLevels.table_exists():
-            db.create_tables([UserLevels])
-            UserLevels.create(name = "beginner", description = "Начинающий")
-            UserLevels.create(name = "advanced", description = "Продвинутый")
+        create_table_if_not_exists(UserLevels, [
+            {"name": "beginner", "description": "Начинающий"},
+            {"name": "advanced", "description": "Продвинутый"}
+        ])
 
-        query = BibleTranslations.delete().where(BibleTranslations.name == "test")
-        query.execute()
+        create_table_if_not_exists(UserSettings)
+
+if __name__ == '__main__':
+    init_database()
+    UserSettings.create(telegram_id=123, bible_translation=BibleTranslations.get(BibleTranslations.name == "RST+"), user_level=UserLevels.get(UserLevels.name == "beginner"))

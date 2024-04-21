@@ -23,8 +23,7 @@ class UserLevels(ModelBase):
     description = pw.CharField(max_length=100)
 
 class UserSettings(ModelBase):
-    user_id = pw.IntegerField()
+    telegram_id = pw.IntegerField(primary_key=True)
     bible_translation = pw.ForeignKeyField(BibleTranslations, backref='user_settings')
     user_level = pw.ForeignKeyField(UserLevels, backref='user_settings')
-    user_name = pw.CharField(max_length=50)
-    user_language = pw.CharField(max_length=10)
+
