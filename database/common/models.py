@@ -63,6 +63,28 @@ class ReadingProgress(BaseModel):
     current_question = ForeignKeyField(Question, related_name='reading_progress', on_delete='SET NULL', null=True)
     position = IntegerField(default=0)
 
+class ReadingPlans(Model):
+    day_number = IntegerField()
+    start_text_number = IntegerField()
+    end_text_number = IntegerField()
+    plan_name = CharField(max_length=100)
+    class Meta:
+        database = db
+        legacy_table_names = False
+
+
+class Verses(Model):
+    book_number = IntegerField()
+    chapter = IntegerField()
+    verse = IntegerField()
+    content_value = TextField()
+    text_number = IntegerField()
+    content_variety = CharField(max_length=20)
+    class Meta:
+        database = db
+        legacy_table_names = False
+
+
 if __name__ == "__main__":
     db.connect()
-    db.create_tables([Text, Question, Student, Answer, Teacher, ReadingProgress], safe=True)
+    db.create_tables([Text, Question, Student, Answer, Teacher, ReadingProgress, ReadingPlans, Verses], safe=True)
