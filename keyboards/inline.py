@@ -12,6 +12,17 @@ def get_main_menu():
     return keyboard
 
 
+def get_first_setup_menu():
+    # Создаем объект клавиатуры для главного меню
+    keyboard = InlineKeyboardMarkup()
+
+    # Создаем кнопки для главного меню
+    keyboard.add(InlineKeyboardButton(text="Настройки", callback_data="settings"))
+    keyboard.add(InlineKeyboardButton(text="Помощь", callback_data="help"))
+
+    return keyboard
+
+
 def get_question_type():
     # Создаем объект клавиатуры для выбора типа текста
     keyboard = InlineKeyboardMarkup()
