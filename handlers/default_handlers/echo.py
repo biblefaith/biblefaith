@@ -7,5 +7,9 @@ from loader import bot
 @bot.message_handler(state=None)
 def bot_echo(message: Message):
     bot.reply_to(
-        message, "Эхо без состояния или фильтра.\n" f"Сообщение: {message.text}"
+        message,
+        "Это сообщение никто не видит, "
+        "если вы хотите связаться с администратором, "
+        "воспользуйтесь пожалуйста кнопкой помощи в меню /start\n\n"
+        f"Сообщение: {message.text}",
     )

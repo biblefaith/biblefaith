@@ -1,9 +1,21 @@
-from config_data.config import DEFAULT_COMMANDS
 from loader import bot
-from keyboards.reply import get_help_menu_keyboard
+# from database.common.models import HelpMessages
+from config_data import config
+from keyboards.inline import get_main_menu
+
+
+def notify_user_message_forwarded(message):
+    # Предполагаем, что у вас уже есть функция для генерации главного меню
+    bot.send_message(message.chat.id, "Ваш вопрос отправлен администраторам. Ожидайте ответа.", reply_markup=get_main_menu())
+
+
+def forward_message_to_admins(message):
+    formatted_message = f"Сообщение от пользователя с ID {message.chat.id}:\n\n{message.text}"
+    bot.send_message(config.ADMIN_CHAT_ID, formatted_message)
+    notify_user_message_forwarded(message)
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'help')
 def bot_help(call):
-    text = [f"/{command} - {desk}" for command, desk in DEFAULT_COMMANDS]
-    bot.send_message(call.message.chat.id, "\n".join(text))
+    bot.send_message(call.message.chat.id, "Напишите ваш вопрос, и наш администратор поможет вам как можно скорее.")
+    bot.register_next_step_handler(call.message, forward_message_to_admins)
