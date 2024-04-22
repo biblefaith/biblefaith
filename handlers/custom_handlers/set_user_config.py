@@ -2,8 +2,7 @@ from loguru import logger
 from keyboards.inline import get_question_type, get_text_type, get_main_menu
 from loader import bot
 from database.common.models import Student
-from telebot.apihelper import ApiTelegramException
-
+from utils.functions import edit_message_reply_markup
 
 # Настройка логирования
 logger.add("bot.log", format="{time} {level} {message}", level="INFO")
@@ -12,14 +11,6 @@ logger.add("bot.log", format="{time} {level} {message}", level="INFO")
 # Определение констант
 BIBLE_TYPES = ['rst', 'nrt']
 QUESTION_TYPES = ['beginner', 'advanced']
-
-
-def edit_message_reply_markup(chat_id, message_id, reply_markup=None):
-    try:
-        bot.edit_message_reply_markup(chat_id, message_id, reply_markup=reply_markup)
-    except ApiTelegramException as e:
-        bot.send_message(chat_id, f"Ошибка при редактировании сообщения: {e}")
-        logger.exception("Ошибка при редактировании сообщения")
 
 
 @bot.callback_query_handler(func=lambda call: call.data == 'settings')
