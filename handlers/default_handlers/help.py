@@ -10,7 +10,7 @@ def notify_user_message_forwarded(message):
 
 
 def forward_message_to_admins(message):
-    formatted_message = f"Сообщение от пользователя с ID {message.chat.id}:\n\n{message.text}"
+    formatted_message = f"Сообщение от пользователя {message.from_user.full_name} @{message.from_user.username}\nс ID {message.chat.id}:\n\n{message.text}"
     bot.send_message(config.ADMIN_CHAT_ID, formatted_message)
     notify_user_message_forwarded(message)
 
