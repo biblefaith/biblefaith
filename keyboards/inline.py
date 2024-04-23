@@ -8,6 +8,7 @@ def get_main_menu():
     keyboard.add(InlineKeyboardButton(text="Начать чтение", callback_data="start_reading"))
     keyboard.add(InlineKeyboardButton(text="Настройки", callback_data="settings"))
     keyboard.add(InlineKeyboardButton(text="Помощь", callback_data="help"))
+    keyboard.add(InlineKeyboardButton(text="Посмотреть прогресс", callback_data="view_progress"))
 
     return keyboard
 

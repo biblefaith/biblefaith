@@ -49,12 +49,31 @@ class Student(BaseModel):
                 logger.error(f"Error saving progress for student {self.telegram_id}: {e}")
                 raise e
 
-    def get_progress(self):
+    def get_current_progress(self):
         try:
-            progress = Progress.select().where(Progress.student == self)
-            return progress
+            # Получаем последний сохранённый прогресс для студента
+            progress = (Progress
+                        .select(Progress, Text.day_number, Question.ordering_number)
+                        .join(Text)
+                        .switch(Progress)
+                        .join(Question)
+                        .where(Progress.student == self)
+                        .order_by(Progress.id.desc())  # Предполагаем, что последний прогресс имеет наибольший ID
+                        .get())
+
+            # Возвращаем day_number и ordering_number
+            return {
+                'day_number': progress.text.day_number,
+                'ordering_number': progress.question.ordering_number
+            }
+        except Progress.DoesNotExist:
+            # Если прогресс отсутствует, можно вернуть None или подходящее умолчание
+            return {
+                'day_number': None,
+                'ordering_number': None
+            }
         except PeeweeException as e:
-            logger.error(f"Error getting progress for student {self.telegram_id}: {e}")
+            logger.error(f"Error retrieving current progress for student {self.telegram_id}: {e}")
             raise e
 
     @classmethod
