@@ -15,14 +15,20 @@ class BaseModel(Model):
         database = db
         legacy_table_names = False
 
-class Text(BaseModel):
+class Text(Model):
+    day_number = IntegerField()
     content = TextField()
     type = CharField(max_length=20)
+    class Meta:
+        database = db
 
-class Question(BaseModel):
-    text = TextField()
-    text_related = ForeignKeyField(Text, backref='questions', on_delete='SET NULL')  # Change on_delete behavior
+class Question(Model):
+    day_number = IntegerField()
+    ordering_number = IntegerField()
+    content = TextField()
     type = CharField(max_length=20)
+    class Meta:
+        database = db
 
 class Student(BaseModel):
     telegram_id = IntegerField(unique=True)
@@ -31,6 +37,25 @@ class Student(BaseModel):
     status = BooleanField(default=True)
     text_type = CharField(max_length=20, null=True)
     question_type = CharField(max_length=20, null=True)
+
+    def save_progress(self, text, question):
+        with db.atomic():
+            try:
+                progress, created = Progress.get_or_create(student=self, text=text, question=question)
+                if created:
+                    logger.info(f"Progress for student {self.telegram_id} saved successfully.")
+                return progress, created
+            except (IntegrityError, PeeweeException) as e:
+                logger.error(f"Error saving progress for student {self.telegram_id}: {e}")
+                raise e
+
+    def get_progress(self):
+        try:
+            progress = Progress.select().where(Progress.student == self)
+            return progress
+        except PeeweeException as e:
+            logger.error(f"Error getting progress for student {self.telegram_id}: {e}")
+            raise e
 
     @classmethod
     def create_or_update(cls, telegram_id, **kwargs):
@@ -51,40 +76,17 @@ class Student(BaseModel):
 
 class Answer(BaseModel):
     student = ForeignKeyField(Student, backref='answers')
-    question = ForeignKeyField(Question, backref='answers', on_delete='CASCADE')
+    question = ForeignKeyField(Question, backref='answers')
     answer = TextField()
 
 class Teacher(BaseModel):
     name = CharField(max_length=100)
 
-class ReadingProgress(BaseModel):
-    student = ForeignKeyField(Student, backref='reading_progress')
-    text = ForeignKeyField(Text, backref='reading_progress', on_delete='CASCADE')
-    current_question = ForeignKeyField(Question, related_name='reading_progress', on_delete='SET NULL', null=True)
-    position = IntegerField(default=0)
-
-class ReadingPlans(Model):
-    day_number = IntegerField()
-    start_text_number = IntegerField()
-    end_text_number = IntegerField()
-    plan_name = CharField(max_length=100)
-    class Meta:
-        database = db
-        legacy_table_names = False
-
-
-class Verses(Model):
-    book_number = IntegerField()
-    chapter = IntegerField()
-    verse = IntegerField()
-    content_value = TextField()
-    text_number = IntegerField()
-    content_variety = CharField(max_length=20)
-    class Meta:
-        database = db
-        legacy_table_names = False
-
+class Progress(BaseModel):
+    student = ForeignKeyField(Student, backref='progress')
+    text = ForeignKeyField(Text, backref='progress')
+    question = ForeignKeyField(Question, backref='progress')
 
 if __name__ == "__main__":
     db.connect()
-    db.create_tables([Text, Question, Student, Answer, Teacher, ReadingProgress, ReadingPlans, Verses], safe=True)
+    db.create_tables([Text, Question, Student, Answer, Teacher, Progress], safe=True)
