@@ -43,3 +43,13 @@ def get_text_type():
     keyboard.add(InlineKeyboardButton("Синодальный перевод", callback_data="rst"))
     keyboard.add(InlineKeyboardButton("Современный перевод", callback_data="nrt"))
     return keyboard
+
+
+def get_question_menu():
+    # Создаем объект клавиатуры для выбора типа текста
+    keyboard = InlineKeyboardMarkup()
+
+    # Создаем кнопки для выбора типа текста
+    keyboard.add(InlineKeyboardButton("Продолжить", callback_data="get_question"))
+    keyboard.add(InlineKeyboardButton("Меню", callback_data="main_menu"))
+    return keyboard

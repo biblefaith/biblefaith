@@ -93,6 +93,37 @@ class Student(BaseModel):
                 logger.error(f"Error updating or creating student: {e}")
                 raise e  # Optionally re-raise the exception for further handling outside
 
+    def get_current_text(self):
+        try:
+            # Находим последний сохранённый прогресс для студента
+            last_progress = (Progress
+                             .select(Progress, Text.day_number)
+                             .join(Text)
+                             .where(Progress.student == self)
+                             .order_by(Progress.id.desc())
+                             .get())
+
+            day_number = last_progress.text.day_number
+        except Progress.DoesNotExist:
+            # Если прогресс отсутствует, устанавливаем day_number = 1
+            day_number = 1
+        
+        try:
+            # Используем day_number для поиска соответствующего текста
+            current_text = (Text
+                            .select()
+                            .where((Text.day_number == day_number) & 
+                                   (Text.type == self.text_type))
+                            .get())
+            return current_text.content
+        except Text.DoesNotExist:
+            # В случае отсутствия текста возвращаем None или сообщение
+            return "No text found for the current day and type."
+        except PeeweeException as e:
+            logger.error(f"Error retrieving current text for student {self.telegram_id}: {e}")
+            raise e
+
+
 class Answer(BaseModel):
     student = ForeignKeyField(Student, backref='answers')
     question = ForeignKeyField(Question, backref='answers')
