@@ -50,6 +50,35 @@ def get_question_menu():
     keyboard = InlineKeyboardMarkup()
 
     # Создаем кнопки для выбора типа текста
-    keyboard.add(InlineKeyboardButton("Продолжить", callback_data="get_question"))
-    keyboard.add(InlineKeyboardButton("Меню", callback_data="main_menu"))
+    keyboard.add(InlineKeyboardButton("Перейти к вопросам", callback_data="get_question"))
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="main_menu"))
+    return keyboard
+
+
+def answer_question_menu():
+    # Создаем объект клавиатуры для выбора типа текста
+    keyboard = InlineKeyboardMarkup()
+
+    # Создаем кнопки для выбора типа текста
+    keyboard.add(InlineKeyboardButton("Сохранить ответ", callback_data="save_answer"))
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="main_menu"))
+    return keyboard
+
+
+def complete_day_menu():
+    # Создаем объект клавиатуры для выбора типа текста
+    keyboard = InlineKeyboardMarkup()
+
+    # Создаем кнопки для выбора типа текста
+    keyboard.add(InlineKeyboardButton("Перейти к следующему тексту", callback_data="start_reading"))
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="main_menu"))
+    return keyboard
+
+def get_next_question_menu():
+    # Создаем объект клавиатуры для выбора типа текста
+    keyboard = InlineKeyboardMarkup()
+
+    # Создаем кнопки для выбора типа текста
+    keyboard.add(InlineKeyboardButton("Следующий вопрос", callback_data="get_question"))
+    keyboard.add(InlineKeyboardButton("Вернуться в меню", callback_data="main_menu"))
     return keyboard
