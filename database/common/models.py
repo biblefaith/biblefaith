@@ -1,6 +1,6 @@
 from loguru import logger
-from peewee import Model, SqliteDatabase, DateTimeField, CharField, TextField, ForeignKeyField, BooleanField, IntegerField, IntegrityError, PeeweeException
-from datetime import datetime, timezone
+from peewee import Model, SqliteDatabase, DateTimeField, CharField, TextField, BooleanField, IntegerField
+from datetime import datetime
 
 logger.add("debug.log", rotation="10 MB", compression="zip")
 db = SqliteDatabase('bot.db')
@@ -57,11 +57,6 @@ class Diary(Model):
     content_variety = CharField(max_length=20) # advanced | beginner | rst | nrt
     content_category = CharField(max_length=20) # question | bible
     created_at = DateTimeField(default=lambda: datetime.now())
-
-
-class UserMessage(BaseModel):
-    telegram_id = IntegerField()
-    message = TextField()
 
 
 if __name__ == "__main__":
