@@ -11,6 +11,7 @@ from states.answerstate import UserAnswerState
 @bot.message_handler(state=UserAnswerState.answer)
 def process_answer(message):
     # Сохраняем ответ в модель Answer
+    bot.set_state(message.chat.id, None)
     set = Student.select().where(Student.telegram_id == message.chat.id).get()
     answer = Answer.create(telegram_id=set.telegram_id, day_number = set.day_number, question_number = set.ordering_number, answer = message.text)
     answer.save()
