@@ -7,8 +7,8 @@ def get_main_menu():
     # Создаем кнопки для главного меню
     keyboard.add(InlineKeyboardButton(text="Начать чтение", callback_data="start_reading"))
     keyboard.add(InlineKeyboardButton(text="Настройки", callback_data="settings"))
-    keyboard.add(InlineKeyboardButton(text="Помощь", callback_data="help"))
     keyboard.add(InlineKeyboardButton(text="Посмотреть прогресс", callback_data="view_progress"))
+    keyboard.add(InlineKeyboardButton(text="Помощь", callback_data="help"))
 
     return keyboard
 
